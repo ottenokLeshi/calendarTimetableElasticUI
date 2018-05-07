@@ -5,17 +5,18 @@ import moment from 'moment';
 import xml2js from 'xml2js';
 
 const parser = new xml2js.Parser().parseString
+
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
 class MyCalendar extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       myEvents : []
     };
   }
 
+  
   createDate(str) {
     const [data, time] = str.split(" ");
     const [month, day, year] = data.split("/")
@@ -23,8 +24,8 @@ class MyCalendar extends Component {
     return new Date(year, month - 1, day, hour, minutes, seconds);
   }
 
-  componentDidMount() {
-    fetch("http://localhost:9200/timetable/_search?q=name:\"15.Б07-пу\"&size=64")
+  getEvents() {
+    return fetch(`http://localhost:9200/timetable/_search?q=name:\"${this.props.currentValue}\"&size=64`)
       .then(response => response.json())
       .then(data => {
         const newData = data.hits.hits.filter(element => element._source.recurrenceinfo !== null ).map(elem => {
@@ -34,7 +35,6 @@ class MyCalendar extends Component {
           return elem;
         }).filter(element => typeof element._source.recurrenceinfo.Start !== 'undefined' )
         const events = newData.map(event => {
-          console.log(event._source.recurrenceinfo.Start + "  " + event._source.recurrenceinfo.End + "  " + event._source.subject)
           const startTime = event._source.recurrenceinfo.Start;
           return {
             id: event._id,
@@ -44,10 +44,12 @@ class MyCalendar extends Component {
             end: this.createDate(startTime.split(" ")[0] + " " + event._source.recurrenceinfo.End.split(" ")[1]),
           }
         })
-        this.setState({ myEvents: events })
+        return this.setState({myEvents: events});
       });
   }
+
   render() {
+    this.getEvents()
     return (
       <div >
         <BigCalendar
