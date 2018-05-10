@@ -7,7 +7,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      currentValue : "15.Б07-пу"
+      groupName: "",
+      educator: ""
     };
   }
 
@@ -19,16 +20,25 @@ class App extends Component {
           url="http://127.0.0.1:9200/"
         >
           <DataSearch
-            componentId="SearchFilter"
+            componentId="SearchGroup"
             dataField={["name"]}
             onValueChange={
               (currentValue) => {
-                this.setState({currentValue})
+                this.setState(Object.assign({}, this.state, {groupName: currentValue}))
+              }
+            }
+          />
+          <DataSearch
+            componentId="SearchEducator"
+            dataField={["educatorsdisplaytext"]}
+            onValueChange={
+              (currentValue1) => {
+                this.setState(Object.assign({}, this.state, {educator: currentValue1}))
               }
             }
           />
         </ReactiveBase>
-        <MyCalendar currentValue = {this.state.currentValue}/>      
+        <MyCalendar state = {this.state}/>      
       </div>
     );
   }
