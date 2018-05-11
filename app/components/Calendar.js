@@ -75,7 +75,7 @@ class MyCalendar extends Component {
       url +=  `name:"${this.props.state.groupName}\"`;
     }
     if (this.props.state.educator !== "") {
-      if (url !== "") url += '+';
+      if (url !== "") url += ' AND ';
       url +=  `educatorsdisplaytext:\"${this.props.state.educator}\"`;
     }
     console.log(this.props)
